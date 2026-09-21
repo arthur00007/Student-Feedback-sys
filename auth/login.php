@@ -20,7 +20,11 @@ $error = '';
 $info = '';
 
 if (isset($_GET['registered'])) {
-    $info = 'Registration successful! You can now log in.';
+    if ($_GET['registered'] === 'pending') {
+        $info = 'Registration submitted! Your account is pending administrator approval before you can log in.';
+    } else {
+        $info = 'Registration successful! You can now log in.';
+    }
 } elseif (isset($_GET['logout'])) {
     $info = 'You have been logged out successfully.';
 } elseif (isset($_GET['error']) && $_GET['error'] === 'login_required') {
@@ -34,26 +38,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($email === '' || $password === '') {
         $error = 'Please enter both email and password.';
     } else {
-        $stmt = $pdo->prepare('SELECT user_id, name, email, password, role FROM users WHERE email = ?');
+        $stmt = $pdo->prepare('SELECT user_id, name, email, password, role, is_verified FROM users WHERE email = ?');
         $stmt->execute([$email]);
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password'])) {
-            // Security: regenerate session id upon login
-            session_regenerate_id(true);
+            if (!$user['is_verified']) {
+                $error = 'Your account is pending administrator approval. Please wait for an admin to verify your registration.';
+            } else {
+                // Security: regenerate session id upon login
+                session_regenerate_id(true);
 
-            $_SESSION['user_id'] = $user['user_id'];
-            $_SESSION['name']    = $user['name'];
-            $_SESSION['email']   = $user['email'];
-            $_SESSION['role']    = $user['role'];
+                $_SESSION['user_id'] = $user['user_id'];
+                $_SESSION['name']    = $user['name'];
+                $_SESSION['email']   = $user['email'];
+                $_SESSION['role']    = $user['role'];
 
-            $target = match ($user['role']) {
-                'admin' => 'admin/dashboard.php',
-                'teacher' => 'teacher/dashboard.php',
-                default => 'student/dashboard.php',
-            };
-            header('Location: ' . BASE_URL . $target);
-            exit;
+                $target = match ($user['role']) {
+                    'admin' => 'admin/dashboard.php',
+                    'teacher' => 'teacher/dashboard.php',
+                    default => 'student/dashboard.php',
+                };
+                header('Location: ' . BASE_URL . $target);
+                exit;
+            }
         } else {
             $error = 'Invalid email or password.';
         }

@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
 
         if ($success) {
-            header('Location: ' . BASE_URL . 'auth/login.php?registered=1');
+            header('Location: ' . BASE_URL . 'auth/login.php?registered=pending');
             exit;
         } else {
             $errors[] = 'Registration failed. Please try again.';

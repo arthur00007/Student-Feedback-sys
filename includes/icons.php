@@ -1,7 +1,4 @@
 <?php
-/**
- * Renders an inline theme-aware SVG icon from assets/icons/
- */
 function icon(string $name, string $class = 'app-icon', array $extraAttrs = []): string {
     $filePath = __DIR__ . '/../assets/icons/' . $name . '.svg';
     if (!file_exists($filePath)) {
@@ -10,11 +7,9 @@ function icon(string $name, string $class = 'app-icon', array $extraAttrs = []):
 
     $svg = file_get_contents($filePath);
 
-    // Strip <?xml and comments
     $svg = preg_replace('/<\?xml.*?\?>/i', '', $svg);
     $svg = preg_replace('/<!--.*?-->/s', '', $svg);
 
-    // Attach class and aria attributes
     if (preg_match('/<svg\b([^>]*)>/i', $svg, $matches)) {
         $attrs = $matches[1];
         if (strpos($attrs, 'class=') !== false) {

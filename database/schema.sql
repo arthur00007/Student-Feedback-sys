@@ -2,7 +2,7 @@
 CREATE DATABASE IF NOT EXISTS student_feedback;
 USE student_feedback;
 
--- USERS TABLE (Only table needed for authentication)
+-- USERS TABLE
 CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -15,5 +15,6 @@ CREATE TABLE IF NOT EXISTS users (
     department VARCHAR(100) NULL,
     semester VARCHAR(20) NULL,
     section VARCHAR(20) NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    is_verified BOOLEAN DEFAULT FALSE
 );

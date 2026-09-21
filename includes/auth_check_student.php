@@ -10,7 +10,6 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 if ($_SESSION['role'] !== 'student') {
-    // Redirect to their own dashboard
     $redirect = ($_SESSION['role'] === 'admin') ? 'admin/dashboard.php' : 'teacher/dashboard.php';
     header('Location: ' . BASE_URL . $redirect . '?error=access_denied');
     exit;
