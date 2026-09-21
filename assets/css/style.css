@@ -1,0 +1,51 @@
+/* Custom Styles for Student Feedback System */
+
+:root {
+  --app-radius: 0.75rem;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+footer {
+  flex-shrink: 0;
+}
+
+/* Theme-aware SVG icons */
+.app-icon {
+  display: inline-block;
+  width: 1.15em;
+  height: 1.15em;
+  vertical-align: -0.18em;
+  fill: currentColor;
+}
+
+.app-icon-lg {
+  width: 2.25rem;
+  height: 2.25rem;
+  vertical-align: middle;
+  fill: currentColor;
+}
+
+/* Card styling */
+.card {
+  border-radius: var(--app-radius);
+}
+
+/* Theme switch styling */
+.dropdown-item.active, .dropdown-item:active {
+  background-color: var(--bs-primary);
+}
+
+/* Auth card width */
+.auth-card {
+  max-width: 540px;
+  width: 100%;
+}
