@@ -3,6 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once __DIR__ . '/../config/db_connect.php';
+/** @var PDO $pdo */
 
 // Redirect if already logged in
 if (isset($_SESSION['user_id'])) {
@@ -42,11 +43,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$email]);
         $user = $stmt->fetch();
 
-        if ($user && password_verify($password, $user['password'])) {
+        if ($user) {
             if (!$user['is_verified']) {
-                $error = 'Your account is pending administrator approval. Please wait for an admin to verify your registration.';
-            } else {
-                // Security: regenerate session id upon login
+                $error = 'Account Not Verified Yet, Please Wait or contact to Admin';
+            } elseif (password_verify($password, $user['password'])) {
                 session_regenerate_id(true);
 
                 $_SESSION['user_id'] = $user['user_id'];
@@ -61,8 +61,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 };
                 header('Location: ' . BASE_URL . $target);
                 exit;
+            } else {
+                // wrong password
+                $error = 'Invalid email or password.';
             }
         } else {
+            // mail not exist in db
             $error = 'Invalid email or password.';
         }
     }

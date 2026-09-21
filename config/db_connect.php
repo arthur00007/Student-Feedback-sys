@@ -5,24 +5,16 @@ define('DB_NAME', 'student_feedback');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 
-// Base URL calculation (works for both php -S and subfolder hosting)
+// Base URL (works automatically for php -S and XAMPP)
 if (!defined('BASE_URL')) {
-    $docRoot = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT'] ?? '');
-    $appDir  = str_replace('\\', '/', dirname(__DIR__));
-    $rel     = str_replace($docRoot, '', $appDir);
-    $base    = '/' . ltrim($rel, '/');
-    if ($base !== '/') {
-        $base = rtrim($base, '/') . '/';
-    }
-    define('BASE_URL', $base);
+    $folder = basename(dirname(__DIR__));
+    define('BASE_URL', str_contains($_SERVER['REQUEST_URI'] ?? '', $folder) ? "/$folder/" : '/');
 }
 
 if (!class_exists('PDO')) {
     die('<div style="font-family:sans-serif;padding:24px;background:#fff1f0;color:#cf1322;border:1px solid #ffa39e;margin:30px;border-radius:8px;">
         <h3 style="margin-top:0;">PHP PDO Extension Missing</h3>
         <p>Your PHP installation is missing the PDO MySQL extension required to connect to the database.</p>
-        <p>Run the following command in your terminal, then reload:</p>
-        <pre style="background:#1f1f1f;color:#73d13d;padding:12px;border-radius:6px;font-size:14px;">sudo dnf install -y php-pdo php-mysqlnd</pre>
     </div>');
 }
 

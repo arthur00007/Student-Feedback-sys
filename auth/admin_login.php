@@ -3,6 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once __DIR__ . '/../config/db_connect.php';
+/** @var PDO $pdo */
 
 // Redirect if already logged in as admin
 if (isset($_SESSION['user_id'])) {
@@ -30,10 +31,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$email]);
         $user = $stmt->fetch();
 
-        if ($user && password_verify($password, $user['password'])) {
+        if ($user) {
             if ($user['role'] !== 'admin') {
                 $error = 'Access denied. This portal is restricted to administrators only.';
-            } else {
+            } elseif (password_verify($password, $user['password'])) {
                 session_regenerate_id(true);
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['name']    = $user['name'];
@@ -42,8 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 header('Location: ' . BASE_URL . 'admin/dashboard.php');
                 exit;
+            } else {
+                // wrong pass
+                $error = 'Invalid admin email or password.';
             }
         } else {
+            // mail not exist in db
             $error = 'Invalid admin email or password.';
         }
     }
