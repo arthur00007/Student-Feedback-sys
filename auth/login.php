@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             } else {
                 // wrong password
-                $error = 'Invalid email or password.';
+                $error = 'Invalid password.';
             }
         } else {
             // mail not exist in db
